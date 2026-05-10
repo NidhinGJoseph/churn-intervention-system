@@ -1,14 +1,11 @@
 # =============================================================================
-# train.py (CORRECTED)
+# train.py (FINAL CLEAN VERSION)
 # =============================================================================
 
 import joblib
-import pandas as pd
-import numpy as np
 
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import roc_auc_score, classification_report
-
 from sklearn.calibration import CalibratedClassifierCV
 
 from src.data_loader import load_raw_data
@@ -61,7 +58,7 @@ def train():
         stratify=y
     )
 
-    # 🔥 CRITICAL: Create validation set for calibration
+    # Validation split (for sanity check, not leakage)
     X_train_main, X_val, y_train_main, y_val = train_test_split(
         X_train, y_train,
         test_size=0.2,
@@ -83,7 +80,7 @@ def train():
 
         logger.info(f"\nTraining {name}...")
 
-        # Cross-validation on TRAIN MAIN only
+        # Cross-validation
         cv_scores = cross_val_score(
             pipeline,
             X_train_main,
@@ -95,17 +92,17 @@ def train():
 
         logger.info(f"CV AUC: {cv_scores.mean():.4f} ± {cv_scores.std():.4f}")
 
-        # Fit on TRAIN MAIN
+        # Fit model
         pipeline.fit(X_train_main, y_train_main)
 
-        # Validate BEFORE calibration (optional check)
+        # Validation check
         y_val_prob = pipeline.predict_proba(X_val)[:, 1]
         val_auc = roc_auc_score(y_val, y_val_prob)
 
-        logger.info(f"Validation AUC (pre-calibration): {val_auc:.4f}")
+        logger.info(f"Validation AUC: {val_auc:.4f}")
 
         # ---------------------------------------------------------------------
-        # CALIBRATION (CORRECT)
+        # CALIBRATION
         # ---------------------------------------------------------------------
         calibrated_model = CalibratedClassifierCV(
             pipeline,
@@ -125,3 +122,43 @@ def train():
 
         logger.info(f"Test AUC (calibrated): {test_auc:.4f}")
         logger.info("\n" + classification_report(y_test, y_test_pred))
+
+        # Store results
+        results[name] = {
+            "model": calibrated_model,
+            "test_auc": test_auc
+        }
+
+    # -------------------------------------------------------------------------
+    # STEP 6: SELECT BEST MODEL
+    # -------------------------------------------------------------------------
+    best_name = max(results, key=lambda x: results[x]["test_auc"])
+    best_model = results[best_name]["model"]
+
+    logger.info(f"\nBEST MODEL: {best_name}")
+    logger.info(f"Test AUC: {results[best_name]['test_auc']:.4f}")
+
+    # -------------------------------------------------------------------------
+    # STEP 7: SAVE MODEL + ENCODER
+    # -------------------------------------------------------------------------
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+
+    joblib.dump(best_model, MODEL_PATH)
+    logger.info(f"Saved model → {MODEL_PATH}")
+
+    encoder_path = MODELS_DIR / "encoder.pkl"
+    joblib.dump(encoder, encoder_path)
+    logger.info(f"Saved encoder → {encoder_path}")
+
+    logger.info("=" * 60)
+    logger.info("TRAINING COMPLETE")
+    logger.info("=" * 60)
+
+    return best_model, encoder
+
+
+# -----------------------------------------------------------------------------
+# ENTRY POINT
+# -----------------------------------------------------------------------------
+if __name__ == "__main__":
+    train()

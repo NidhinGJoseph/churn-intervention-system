@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+# churn-intervention-system
+=======
 Business Problem (draft)
 
 
@@ -10,3 +13,4 @@ A subscription startup has a limited monthly retention budget and cannot interve
 
 
 
+>>>>>>> 4fc66e8 (Initial churn intervention system (clean structure))
