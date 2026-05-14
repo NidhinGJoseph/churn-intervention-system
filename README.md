@@ -1,3 +1,4 @@
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://churn-intervention-system.streamlit.app)
 Churn Intervention Optimization System
 
 An end-to-end machine learning and decision optimization system for telecom customer retention.
