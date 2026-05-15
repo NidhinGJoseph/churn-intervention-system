@@ -25,12 +25,18 @@ A telecom company has a limited monthly retention budget and cannot intervene on
 
 Metric - Value 
 
-Customers analyzed - 7,043 
-Customers targeted - 272 
-Budget used - ₹4,994 
-Revenue saved - ₹34,803 
-Expected profit - ₹29,809 
-ROI - 5.97x 
+Customers analyzed - 7,043
+
+Customers targeted - 272
+
+Budget used - ₹4,994
+
+Revenue saved - ₹34,803
+
+Expected profit - ₹29,809
+
+ROI - 5.97x
+
 Lift over random targeting - 2.57x 
 
 ---
