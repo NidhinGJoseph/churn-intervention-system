@@ -36,3 +36,39 @@ A telecom company has a limited monthly retention budget and cannot intervene on
 ---
 
 ## Project Structure
+src/
+├── data_loader.py          # Data ingestion
+├── data_preprocessing.py   # Cleaning and encoding
+├── features.py             # Feature engineering
+├── model.py                # Churn model training
+├── intervention.py         # LTV and ROI estimation
+├── optimizer.py            # Budget-constrained targeting
+├── predict.py              # Inference pipeline
+├── train.py                # Training entry point
+└── config.py               # Configuration
+dashboard/
+└── dashboard.py            # Streamlit app
+data/raw/
+└── telco_churn.csv         # IBM Telco dataset (7,043 customers)
+models/
+├── churn_model.pkl
+└── encoder.pkl
+test/
+├── test_model.py
+├── test_optimizer.py
+└── test_preprocessing.py
+
+---
+
+## Tech Stack
+
+Python · Scikit-learn · Pandas · NumPy · Streamlit · Plotly · XGBoost · LightGBM
+
+---
+
+## Setup
+
+```bash
+pip install -e .
+streamlit run dashboard/dashboard.py
+```
